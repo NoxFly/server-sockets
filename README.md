@@ -6,6 +6,7 @@
 ./run.sh # compile and execute both and in order the server and the client
 ./run.sh client # compile and execute the client
 ./run.sh server # compile and execute the server
+./run.sh server kill # shortcut to kill the server process
 ```
 
 # About
