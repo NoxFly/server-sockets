@@ -1,13 +1,7 @@
-/*
- * echoserveri.c - An iterative echo server
- */
-
 #include "csapp.h"
+#include "echo.h"
 
-#define MAX_NAME_LEN 256
-#define PORT 2121
-
-void echo(int connfd);
+#include "server.h"
 
 /* 
  * Note that this code only works with IPv4 addresses
@@ -20,17 +14,25 @@ int main(int argc, char **argv)
     struct sockaddr_in clientaddr;
     char client_ip_string[INET_ADDRSTRLEN];
     char client_hostname[MAX_NAME_LEN];
+    int pools[POOL];
+    pid_t pid = getpid();
     
-    if(argc != 1){
-        printf("Too mutch arguments...\n");
+    if(argc != 1) {
+        printf("Too much arguments...\n");
         exit(1);
     }
     
     clientlen = (socklen_t)sizeof(clientaddr);
 
     listenfd = Open_listenfd(PORT);
+
+    for(int i = 0; i< POOL; i++){
+        if(pid != 0){
+            pid = Fork();
+        }
+    }
+
     while (1) {
-        
         connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen);
 
         /* determine the name of the client */
@@ -47,6 +49,6 @@ int main(int argc, char **argv)
         echo(connfd);
         Close(connfd);
     }
+
     exit(0);
 }
-

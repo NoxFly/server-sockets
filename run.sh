@@ -3,18 +3,28 @@ clientDir=client/
 binDir=bin/
 
 compileServer() {
+    echo -e "\033[0;90m"
     make -C $serverDir
-    return $?
+    r=$?
+    echo -e "\033[0m"
+    return $r
 }
 
 compileClient() {
+    echo -e "\033[0;90m"
     make -C $clientDir
-    return $?
+    r=$?
+    echo -e "\033[0m"
+    return $r
 }
 
 executeServer() {
     path=./$serverDir$binDir
     exe=$(find $path -executable -type f)
+
+    echo -e "\033[1;32m"
+    echo -e "\nExecuting the server :\n"
+    echo -e "\033[0m"
 
     #if [ ! -z "$exe" ]; then
         $exe&
@@ -24,18 +34,37 @@ executeServer() {
     return 1
 }
 
+killClient(){
+    id=$(ps -au | grep "./client/bin/ftp_client localhost 2121" | head -1 | cut -d" " -f5)
+    kill $id
+
+    if [ $? -eq 0 ]; then
+        echo "Killed the client"
+    else
+        echo "Failed to kill the client"
+    fi
+}
+
 killServer() {
     id=$(ps | grep ftp_server | cut -d" " -f2)
     kill $id
-    echo "Killed the server"
+    if [ $? -eq 0 ]; then
+        echo "Killed the server"
+    else
+        echo "Failed to kill the server"
+    fi
 }
 
 executeClient() {
     path=./$clientDir$binDir
     exe=$(find $path -executable -type f)
+
+    echo -e "\033[1;32m"
+    echo -e "\nExecuting the client :\n"
+    echo -e "\033[0m"
     
     #if [ ! -z "$exe" ]; then
-        $exe localhost 2121
+        $exe localhost
         return $?
     #fi
 
@@ -74,10 +103,18 @@ if [ $# -eq 0 ]; then
     fi
 else
     if [ $1 == "client" ]; then
-        launchClient
+        if [ $# -gt 1 ]; then
+            if [ $2 == "kill" ]; then
+                killClient
+            fi
+        else
+            launchClient
+        fi
     elif [ $1 == "server" ]; then
-        if [ $2 == "kill" ]; then
-            killServer
+        if [ $# -gt 1 ]; then
+            if [ $2 == "kill" ]; then
+                killServer
+            fi
         else
             launchServer
         fi 

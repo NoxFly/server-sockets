@@ -1,7 +1,6 @@
-/*
- * echoclient.c - An echo client
- */
 #include "csapp.h"
+
+#define PORT 2121
 
 int main(int argc, char **argv)
 {
@@ -9,19 +8,19 @@ int main(int argc, char **argv)
     char *host, buf[MAXLINE];
     rio_t rio;
 
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s <host> <port>\n", argv[0]);
+    if (argc != 2) {
+        fprintf(stderr, "usage: %s <host>\n", argv[0]);
         exit(0);
     }
+
     host = argv[1];
-    port = atoi(argv[2]);
 
     /*
      * Note that the 'host' can be a name or an IP address.
      * If necessary, Open_clientfd will perform the name resolution
      * to obtain the IP address.
      */
-    clientfd = Open_clientfd(host, port);
+    clientfd = Open_clientfd(host, PORT);
     
     /*
      * At this stage, the connection is established between the client
@@ -32,14 +31,26 @@ int main(int argc, char **argv)
     
     Rio_readinitb(&rio, clientfd);
 
+    Fputs("ftp >",stdout);
+
     while (Fgets(buf, MAXLINE, stdin) != NULL) {
+        //printf("ftp > ");
+        if(strcmp(buf,"exit\n") == 0) {
+            printf("Exiting ftp\n");
+            exit(0);
+        }
+
         Rio_writen(clientfd, buf, strlen(buf));
+        
         if (Rio_readlineb(&rio, buf, MAXLINE) > 0) {
+            Fputs("Server response : ",stdout);
             Fputs(buf, stdout);
         } else { /* the server has prematurely closed the connection */
             break;
         }
+        Fputs("ftp >",stdout);
     }
+
     Close(clientfd);
     exit(0);
 }
