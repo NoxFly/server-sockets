@@ -1,5 +1,5 @@
 #include "csapp.h"
-#include "echo.h"
+#include "treatment.h"
 
 #include "server.h"
 
@@ -46,8 +46,8 @@ int main(int argc, char **argv)
         printf("server connected to %s (%s)\n", client_hostname,
                client_ip_string);
 
-        echo(connfd);
-        Close(connfd);
+        command_treatment(connfd);
+        //Close(connfd);
     }
 
     exit(0);

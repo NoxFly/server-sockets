@@ -1,10 +1,7 @@
-/*
- * echo - read and echo text lines until client closes connection
- */
 #include "csapp.h"
-#include "echo.h"
+#include "treatment.h"
 
-void echo(int connfd)
+void command_treatment(int connfd)
 {
     size_t n;
     char buf[MAXLINE];
