@@ -1,5 +1,6 @@
 #include "csapp.h"
 #include "treatment.h"
+#include "handler.h"
 
 #include "server.h"
 
@@ -30,6 +31,13 @@ int main(int argc, char **argv)
         if(pid != 0){
             pid = Fork();
         }
+    }
+
+    if(pid == 0){
+        Signal(SIGINT,exit_handler_child);
+    }
+    else{
+        Signal(SIGINT,exit_handler_main);
     }
 
     while (1) {
