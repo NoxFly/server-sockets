@@ -1,4 +1,5 @@
 #include "csapp.h"
+#include "gestionner.h"
 
 #define PORT 2121
 
@@ -6,6 +7,7 @@ int main(int argc, char **argv)
 {
     int clientfd, port;
     char *host, buf[MAXLINE];
+    int response_code;
     rio_t rio;
 
     if (argc != 2) {
@@ -34,19 +36,15 @@ int main(int argc, char **argv)
     Fputs("ftp >",stdout);
 
     while (Fgets(buf, MAXLINE, stdin) != NULL) {
-        //printf("ftp > ");
         if(strcmp(buf,"exit\n") == 0) {
             printf("Exiting ftp\n");
             exit(0);
         }
 
         Rio_writen(clientfd, buf, strlen(buf));
-        
-        if (Rio_readlineb(&rio, buf, MAXLINE) > 0) {
-            Fputs("Server response : ",stdout);
-            Fputs(buf, stdout);
-        } else { /* the server has prematurely closed the connection */
-            printf("The server closed the connection\n");
+
+        response_code = response_gestionner(rio);
+        if(response_code < 0){
             break;
         }
         Fputs("ftp >",stdout);

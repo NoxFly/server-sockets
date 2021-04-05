@@ -46,7 +46,7 @@ killClient(){
 }
 
 killServer() {
-    id=$(ps | grep ftp_server | cut -d" " -f3 | head -1)
+    id=$(ps | grep ftp_server | cut -d" " -f2 | head -1)
     kill -2 $id
     if [ $? -eq 0 ]; then
         echo "Killed the server"
@@ -95,6 +95,11 @@ launchClient() {
     return 1
 }
 
+restartServer(){
+    killServer
+    launchServer
+}
+
 
 if [ $# -eq 0 ]; then
     launchServer
@@ -114,6 +119,8 @@ else
         if [ $# -gt 1 ]; then
             if [ $2 == "kill" ]; then
                 killServer
+            elif [ $2 == "restart" ]; then
+                restartServer
             fi
         else
             launchServer
