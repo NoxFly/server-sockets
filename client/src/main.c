@@ -46,6 +46,7 @@ int main(int argc, char **argv)
             Fputs("Server response : ",stdout);
             Fputs(buf, stdout);
         } else { /* the server has prematurely closed the connection */
+            printf("The server closed the connection\n");
             break;
         }
         Fputs("ftp >",stdout);

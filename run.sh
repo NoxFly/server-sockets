@@ -46,9 +46,8 @@ killClient(){
 }
 
 killServer() {
-    id=$(ps | grep ftp_server | cut -d" " -f4 | head -1)
-    echo $id
-    kill $id
+    id=$(ps | grep ftp_server | cut -d" " -f3 | head -1)
+    kill -2 $id
     if [ $? -eq 0 ]; then
         echo "Killed the server"
     else

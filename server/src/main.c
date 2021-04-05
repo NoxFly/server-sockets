@@ -55,7 +55,7 @@ int main(int argc, char **argv)
                client_ip_string);
 
         command_treatment(connfd);
-        //Close(connfd);
+        Close(connfd);
     }
 
     exit(0);

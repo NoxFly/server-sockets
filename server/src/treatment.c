@@ -8,9 +8,14 @@ void command_treatment(int connfd)
     rio_t rio;
 
     Rio_readinitb(&rio, connfd);
+    /*
     while ((n = Rio_readlineb(&rio, buf, MAXLINE)) != 0) {
         printf("server received %u bytes\n", (unsigned int)n);
         printf("Client command : %s",buf);
         Rio_writen(connfd, buf, n);
     }
+    */
+    n = Rio_readlineb(&rio, buf,MAXLINE);
+    printf("File request : %s",buf);
+    Rio_writen(connfd,buf,n);
 }
