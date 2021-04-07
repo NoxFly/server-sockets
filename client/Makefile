@@ -2,8 +2,8 @@
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 CC = gcc
-CFLAGS =
-LDFLAGS =
+CFLAGS = -g
+LDFLAGS = -g
 
 SRCDIR = src/
 INCDIR = include/
@@ -27,7 +27,7 @@ $(EXE): $(OBJS)
 
 $(BUILDDIR)%.o: $(SRCDIR)%.c
 	@mkdir -p $(BUILDDIR)
-	$(CC) -I$(INCDIR) -c -o $@ $<
+	$(CC) $(CFLAGS) -I$(INCDIR) -c -o $@ $<
 
 clean:
 	rm -f $(ROOT_DIR)/$(BINDIR)* $(ROOT_DIR)/$(BUILDDIR)*

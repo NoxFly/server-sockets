@@ -2,44 +2,74 @@
 #include "treatment.h"
 
 #include <unistd.h>
+#include <math.h>
+
+long file_size(FILE* req_file){
+    fseek(req_file,0,SEEK_END);
+    long numbyte = ftell(req_file);
+    fseek(req_file,0,SEEK_SET);
+    return numbyte;
+}
+
+char * file_content(FILE* req_file, long size){
+    char *content = malloc(size + 1);
+    fread(content,1,size,req_file);
+    fclose(req_file);
+    content[size] = 0;
+    return content;
+}
+
+int len(char* string){
+    int nb = 0;
+    while (*string)
+    {
+        nb++;
+        *string++;
+    }
+    return nb;
+}
 
 void command_treatment(int connfd)
 {
-    size_t n;
-    char buf[MAXLINE];
-    char msg[MAXLINE];
-    char header[MAXLINE];
+    size_t n,m;
     char file_location[MAXLINE + strlen(STORAGE_LOCATION)];
+    char* content;
     rio_t rio;
-    int req_file;
+    long lg;
+    FILE* req_file;
+    REQ_MSG req = malloc(sizeof(REQ_MSG));
+    REP_MSG rep = malloc(sizeof(REP_MSG));
 
     Rio_readinitb(&rio, connfd);
-    /*
-    while ((n = Rio_readlineb(&rio, buf, MAXLINE)) != 0) {
-        printf("server received %u bytes\n", (unsigned int)n);
-        printf("Client command : %s",buf);
-        Rio_writen(connfd, buf, n);
-    }
-    */
-    n = Rio_readlineb(&rio, buf,MAXLINE);
+    n = Rio_readnb(&rio, req,sizeof(REQ_MSG));
+    printf("Requete reçue : \n\tnum commande : %d\n\targument : %d\n",req->cmd,req->arg1);
+    printf("\n");
+    char file_name[req->arg1];
+    m = Rio_readnb(&rio,file_name,req->arg1);
+    file_name[req->arg1] = 0;
+    printf("File name : %s\nblo\n",file_name);
+    printf("\n");
     strcat(file_location,STORAGE_LOCATION);
-    strcat(file_location,buf);
-    file_location[strlen(file_location) -1] = '\0';
+    strcat(file_location,file_name);
     printf("Client require file %s\n",file_location);
-    if((req_file = open(file_location,0600,O_RDONLY)) < 0){
-        printf("Failed to open file %s\n",file_location);
-        strcat(header,"error\n");
-        Rio_writen(connfd,header,strlen(header));
-        strcat(msg,"Failed to open this file\n");
-        Rio_writen(connfd,msg,strlen(msg));
+    
+    req_file = fopen(file_location,"rb");
+    if(req_file == NULL){
+        printf("File not found\n");
+        rep->size = -1;
+        rep->state = 0;
+        content = "Failed to open the file";
+        Rio_writen(connfd,rep,sizeof(REP_MSG));
+        Rio_writen(connfd,content,len(content));
     }
     else{
-        printf("File opened\n");
-        strcat(header,"success\n");
-        printf("Sending success\n");
-        Rio_writen(connfd,header,strlen(header));
-        strcat(msg,"file opened\n");
-        printf("Sending file\n");
-        Rio_writen(connfd,msg,strlen(msg));
+        printf("File found\n");
+        lg = file_size(req_file);
+        content = file_content(req_file,lg);
+        printf("Content of the file : %s\nsize: %d\n",content,lg);
+        rep->size = lg;
+        rep->state = 1;
+        Rio_writen(connfd,rep,sizeof(REP_MSG));
+        Rio_writen(connfd,content,lg);
     }
 }

@@ -41,9 +41,9 @@ int main(int argc, char **argv)
             exit(0);
         }
 
-        Rio_writen(clientfd, buf, strlen(buf));
+        //Rio_writen(clientfd, buf, strlen(buf));
 
-        response_code = response_gestionner(rio);
+        response_code = server_gestionner(clientfd,rio,buf);
         if(response_code < 0){
             break;
         }
