@@ -60,10 +60,11 @@ int len(char* string){
 
 void save_file(char* name, char* content){
     char file_location[sizeof(FILE_LOCATION) + MAXLINE] = FILE_LOCATION;
+    name[len(name) - 1] = 0;
     strcat(file_location,name);
     printf("Path : %s\n",file_location);
-    FILE* f = fopen(name,"w");
-    fprintf(f,"%s",content);
+    FILE* f = fopen(file_location,"w");
+    fprintf(f,content);
     fclose(f);
 }
 

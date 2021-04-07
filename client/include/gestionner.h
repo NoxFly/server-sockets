@@ -4,7 +4,7 @@
 #include "csapp.h"
 
 #define HEADER_SIZE 9
-#define FILE_LOCATION "storage/"
+#define FILE_LOCATION "client/storage/"
 
 typedef struct REQ_MSG *REQ_MSG;
 

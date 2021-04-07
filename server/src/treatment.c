@@ -12,10 +12,10 @@ long file_size(FILE* req_file){
 }
 
 char * file_content(FILE* req_file, long size){
-    char *content = malloc(size + 1);
+    char *content = malloc(size);
     fread(content,1,size,req_file);
     fclose(req_file);
-    content[size] = 0;
+    //content[size -1] = 10;
     return content;
 }
 
@@ -66,7 +66,6 @@ void command_treatment(int connfd)
         printf("File found\n");
         lg = file_size(req_file);
         content = file_content(req_file,lg);
-        printf("Content of the file : %s\nsize: %d\n",content,lg);
         rep->size = lg;
         rep->state = 1;
         Rio_writen(connfd,rep,sizeof(REP_MSG));
