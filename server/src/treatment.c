@@ -40,6 +40,8 @@ void command_treatment(int connfd)
     REQ_MSG req = malloc(sizeof(REQ_MSG));
     REP_MSG rep = malloc(sizeof(REP_MSG));
 
+    printf("___________________________\n");
+
     Rio_readinitb(&rio, connfd);
     n = Rio_readnb(&rio, req,sizeof(REQ_MSG));
     printf("Requete reçue : \n\tnum commande : %d\n\targument : %d\n",req->cmd,req->arg1);
@@ -47,8 +49,7 @@ void command_treatment(int connfd)
     char file_name[req->arg1];
     m = Rio_readnb(&rio,file_name,req->arg1);
     file_name[req->arg1] = 0;
-    printf("File name : %s\nblo\n",file_name);
-    printf("\n");
+    printf("File name : %s\n",file_name);
     strcat(file_location,STORAGE_LOCATION);
     strcat(file_location,file_name);
     printf("Client require file %s\n",file_location);
