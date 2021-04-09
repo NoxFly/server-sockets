@@ -19,7 +19,7 @@ typedef struct REP_MSG *REP_MSG;
 
 struct REP_MSG{
     int state;
-    int size;
+    long long size;
 };
 
 void command_treatment(int connfd);

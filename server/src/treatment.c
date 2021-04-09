@@ -3,20 +3,19 @@
 
 #include <unistd.h>
 #include <math.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-long file_size(FILE* req_file){
-    fseek(req_file,0,SEEK_END);
-    long numbyte = ftell(req_file);
-    fseek(req_file,0,SEEK_SET);
-    return numbyte;
+long file_size(char* req_file, struct stat dest){
+    stat(req_file,&dest);
 }
 
-char * file_content(FILE* req_file, long size){
-    char *content = malloc(size);
-    fread(content,1,size,req_file);
-    fclose(req_file);
-    //content[size -1] = 10;
-    return content;
+char * file_content(int req_file, long long size, char* content){
+    rio_t file_rio;
+    Rio_readinitb(&file_rio,req_file);
+    Rio_readnb(&file_rio,content,size);
+    Close(req_file);
 }
 
 int len(char* string){
@@ -33,10 +32,11 @@ void command_treatment(int connfd)
 {
     size_t n,m;
     char file_location[MAXLINE + strlen(STORAGE_LOCATION)];
-    char* content;
-    rio_t rio;
+    char content[MAXLINE];
+    rio_t rio, file_rio;
     long lg;
-    FILE* req_file;
+    int req_file;
+    struct stat buffer;
     REQ_MSG req = malloc(sizeof(REQ_MSG));
     REP_MSG rep = malloc(sizeof(REP_MSG));
 
@@ -54,22 +54,23 @@ void command_treatment(int connfd)
     strcat(file_location,file_name);
     printf("Client require file %s\n",file_location);
     
-    req_file = fopen(file_location,"rb");
-    if(req_file == NULL){
+    req_file = open(file_location,S_IWUSR,O_RDONLY);
+    if(req_file == -1){
         printf("File not found\n");
         rep->size = -1;
         rep->state = 0;
-        content = "Failed to open the file";
+        strcat(content,"Failed to open the file");
         Rio_writen(connfd,rep,sizeof(REP_MSG));
         Rio_writen(connfd,content,len(content));
     }
     else{
         printf("File found\n");
-        lg = file_size(req_file);
-        content = file_content(req_file,lg);
-        rep->size = lg;
+        file_size(file_location,buffer);
+        file_content(req_file,(long long)buffer.st_size,content);
+        rep->size = (long long)buffer.st_size;
         rep->state = 1;
         Rio_writen(connfd,rep,sizeof(REP_MSG));
         Rio_writen(connfd,content,lg);
+        close(req_file);
     }
 }
