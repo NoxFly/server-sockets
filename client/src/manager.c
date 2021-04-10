@@ -1,4 +1,4 @@
-#include "gestionner.h"
+#include "manager.h"
 #include <string.h>
 char** str_split(char* a_str, const char a_delim)
 {
@@ -84,7 +84,7 @@ char ** create_request(char* buf, REQ_MSG req){
     return args;
 }
 
-int server_gestionner(int clientfd,rio_t rio, char *buf){
+int server_manager(int clientfd,rio_t rio, char *buf){
     REQ_MSG req = malloc(sizeof(REQ_MSG));
     REP_MSG rep = malloc(sizeof(REP_MSG));
     char ** args = create_request(buf,req);

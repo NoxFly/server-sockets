@@ -1,5 +1,5 @@
 #include "csapp.h"
-#include "gestionner.h"
+#include "manager.h"
 
 #define PORT 2121
 
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
         //Rio_writen(clientfd, buf, strlen(buf));
 
-        response_code = server_gestionner(clientfd,rio,buf);
+        response_code = server_manager(clientfd,rio,buf);
         if(response_code < 0){
             break;
         }

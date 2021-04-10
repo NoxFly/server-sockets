@@ -1,5 +1,5 @@
-#ifndef GESTIONNER_H
-#define GESTIONNER_H
+#ifndef MANAGER_H
+#define MANAGER_H
 
 #include "csapp.h"
 
@@ -20,6 +20,6 @@ struct REP_MSG{
     long long size;
 };
 
-int server_gestionner(int clientfd,rio_t rio, char* buf);
+int server_manager(int clientfd,rio_t rio, char* buf);
 
-#endif // !GESTIONNER_H
+#endif // !MANAGER_H
