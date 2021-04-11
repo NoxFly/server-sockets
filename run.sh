@@ -46,7 +46,7 @@ killClient(){
 }
 
 killServer() {
-    id=$(ps | grep ftp_server | cut -d" " -f2 | head -1)
+    id=$(ps | grep ftp_server | cut -d" " -f1 | head -1)
     kill -2 $id
     if [ $? -eq 0 ]; then
         echo "Killed the server"
@@ -107,6 +107,17 @@ if [ $# -eq 0 ]; then
         launchClient
     fi
 else
+    if [ $# -eq 1 ] && [ $1 == "-h" -o $1 == "--help" ]; then
+        echo -e "$0\t\t: compile and execute both and in order the server and the client"
+        echo -e "$0 client\t\t: compile and launch the client"
+        echo -e "$0 server\t\t: compile and launch the server"
+        echo -e "$0 server restart : restart the server"
+        echo -e "$0 server kill\t: kill the server"
+        echo -e "$0 client kill\t: kill the client"
+        exit 0
+    fi
+
+
     if [ $1 == "client" ]; then
         if [ $# -gt 1 ]; then
             if [ $2 == "kill" ]; then
